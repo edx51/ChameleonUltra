@@ -1,6 +1,7 @@
 #include <hal/nrf_nfct.h>
 #include <nrfx_nfct.h>
 #include <nrf_gpio.h>
+#include <stdlib.h>
 
 #define NRF_LOG_MODULE_NAME nfc
 #include "nrf_log.h"
@@ -634,8 +635,22 @@ static inline void nrf_nfct_reset(void) {
 static inline void nfc_fdt_reset(void) {
     // STOP TX
     *(volatile uint32_t *)0x40005010 = 0x01;
-    // Reset fdt max
-    nrf_nfct_frame_delay_max_set(0x00001000UL);
+    
+#if NFC_MF1_TIMING_AGGRESSIVE
+    // Aggressive timing for fast readers - minimal delay
+    nrf_nfct_frame_delay_max_set(NFC_MF1_FDT_MIN_CYCLES * 2);
+    nrf_nfct_frame_delay_min_set(NFC_MF1_FDT_MIN_CYCLES);
+#else
+    // Reset FDT to default value for Mifare Classic emulation
+    // Uses configured values from nfc_14a.h for better reader compatibility
+    nrf_nfct_frame_delay_max_set(NFC_MF1_FDT_MAX_DEFAULT);
+#endif
+    
+#if NFC_MF1_FDT_JITTER > 0
+    // Add small random jitter to prevent timing-based fingerprinting
+    uint8_t jitter = (uint8_t)(rand() % NFC_MF1_FDT_JITTER);
+    nrf_nfct_frame_delay_min_set(nrf_nfct_frame_delay_min_get() + jitter);
+#endif
 }
 
 extern bool g_usb_led_marquee_enable;
