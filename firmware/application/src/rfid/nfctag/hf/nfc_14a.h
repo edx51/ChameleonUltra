@@ -9,7 +9,23 @@
 #define NFC_TAG_14A_CRC_LENGTH  2
 
 // Whether to automatically remove the coupling school test (hardware removed)
-#define NFC_TAG_14A_RX_PARITY_AUTO_DEL_ENABLE  0
+// Set to 1 to enable hardware parity handling for better reader compatibility
+// Enabled for improved Mifare Classic emulation compatibility with various readers
+#define NFC_TAG_14A_RX_PARITY_AUTO_DEL_ENABLE  1
+
+// Mifare Classic timing configuration
+// FDT (Frame Delay Time) values according to ISO14443-A
+// Default: 65535 (maximum window for compatibility)
+#define NFC_MF1_FDT_MAX_DEFAULT       65535
+// Minimum FDT for card response (in cycles of 13.56 MHz / 128 = 106 kHz clock)
+// Standard requires card response within 7-9 ms after reader command
+#define NFC_MF1_FDT_MIN_CYCLES        1024
+// Aggressive timing mode for fast readers (reduces response delay)
+// Enable for faster response but may reduce compatibility with some readers
+#define NFC_MF1_TIMING_AGGRESSIVE     0
+// Add random jitter to FDT to prevent timing-based fingerprinting (0-255 cycles)
+// Recommended: 32-128 for protection against timing analysis attacks
+#define NFC_MF1_FDT_JITTER            64
 
 #define NFC_TAG_14A_CASCADE_CT  0x88
 

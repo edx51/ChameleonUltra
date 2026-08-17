@@ -1332,13 +1332,18 @@ bool nfc_tag_mf1_data_factory(uint8_t slot, tag_specific_type_t tag_type) {
     p_mf1_information->config.use_mf1_coll_res = false;
     p_mf1_information->config.mode_block_write = NFC_TAG_MF1_WRITE_NORMAL;
     p_mf1_information->config.detection_enable = false;
+    // Default: do NOT reset on field loss - some readers detect this as emulator behavior
+    // Reset only if explicitly needed for specific problematic readers
     p_mf1_information->config.field_off_do_reset = false;
 
     // PRNG type defaults to WEAK (1) — real MFC LFSR, compatible with Eltis readers
     p_mf1_information->config.prng_type = 1;
+    // Stealth mode disabled by default - enable for advanced readers that check timing
+    p_mf1_information->config.mode_stealth = 0;
     p_mf1_information->config.reserved1 = 0x00;
     p_mf1_information->config.reserved2 = 0x00;
     p_mf1_information->config.reserved3 = 0x00;
+    p_mf1_information->config.reserved4 = 0x00;
 
     // save data to flash
     tag_sense_type_t sense_type = get_sense_type_from_tag_type(tag_type);

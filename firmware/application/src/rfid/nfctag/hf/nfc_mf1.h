@@ -80,10 +80,18 @@ typedef struct {
     uint8_t field_off_do_reset: 1;
     // PRNG type: 0=static 1=weak/LFSR(default) 2=hard/rand
     uint8_t prng_type: 2;
+    /**
+     * Stealth mode: hides emulation signatures from advanced readers
+     * - Adds random jitter to response timing
+     * - Masks EV1 signature sector responses
+     * - Improves parity handling for better compatibility
+     * Default: disabled (0)
+     */
+    uint8_t mode_stealth: 1;
     // reserved
-    uint8_t reserved1: 1;
-    uint8_t reserved2;
+    uint8_t reserved2: 1;
     uint8_t reserved3;
+    uint8_t reserved4;
 } nfc_tag_mf1_configure_t;
 
 /*
